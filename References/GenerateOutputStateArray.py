@@ -6,6 +6,13 @@ def write_binary_strings_to_file(num_bits, count, file_name):
             # Generate the binary representation of the number
             binary_str = f"{i:0{num_bits}b}"  # Format the number as a binary string with leading zeros
 
+            # account for logical linking of relay R06 with R05
+            if (binary_str[-5] == '1') and (binary_str[-6] == '1'):
+                continue
+            elif (binary_str[-5] == '0') and (binary_str[-6] == '1'):
+                # binary_str[-5] = '1'
+                binary_str = binary_str[:num_bits-5] + '1' + binary_str[-5+1:]
+
             # Convert the string into the desired format
             formatted_str = "{" + ", ".join(binary_str) + "}"
 
