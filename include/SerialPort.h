@@ -9,7 +9,7 @@
 /*!
     @brief  Class for reading action code data packets from serial.
             Data packets to be enclosed with '<' and '>'.
-            Data between < and > is to be an integer from 1-254, representing 
+            Data between < and > is to be an integer from 0-254, representing 
             an action code.
 */
 /**************************************************************************/

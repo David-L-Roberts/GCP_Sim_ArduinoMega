@@ -4,6 +4,7 @@
 // Array values generated with script: References\GenerateOutputStateArray.py
 
 #define NUM_STATES 384
+#define MAX_STATE_NUM 383
 #define NUM_OUTPUTS 9
 
 /*
