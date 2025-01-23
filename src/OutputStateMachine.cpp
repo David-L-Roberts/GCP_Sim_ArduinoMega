@@ -20,20 +20,26 @@ OutputStateMachine::OutputStateMachine() {
 void OutputStateMachine::nextState() {
 
     if (endStateReached) {      // TODO: REVIEW
-        return;
+        return; // do nothing
     }
 
     switch (_cycleMode)
     {
     case DECREASE_EZ:
         _nextStateDecreaseEZ();
+        _applyStateOutputs();
         break;
         
     case INCREASE_EZ:
         /* code */
         break;
+        
+    case IDLE:
+        /* code */
+        break;
     
     default:    // MANUAL
+        _applyStateOutputs();
         break;
     }
 }
@@ -45,15 +51,31 @@ void OutputStateMachine::nextState() {
 */
 /**************************************************************************/
 void OutputStateMachine::_nextStateDecreaseEZ() {
-    _currentStateNum = _currentStateNum + 1;
-    _currentStateOutputsArr = outputStateArray[_currentStateNum];
-
-    if (_currentStateNum == MAX_STATE_NUM) {
+    if (_currentStateNum == (MAX_STATE_NUM-1)) {
         endStateReached = true;
     }
+
+    _currentStateNum = _currentStateNum + 1;
+    _currentStateOutputsArr = outputStateArray[_currentStateNum];
 }
 
 
+/**************************************************************************/
+/*!
+    @brief  Change the digital outputs to align with the state.
+    @return void
+*/
+/**************************************************************************/
+void OutputStateMachine::_applyStateOutputs() {
+    int pinNumber;
+    int val;
+
+    for (int i; i < NUM_OUTPUTS; i++) {
+        val = _currentStateOutputsArr[i];
+        pinNumber = pinMappings[i];
+        digitalWrite(pinNumber, val);
+    }
+}
 
 
 /**************************************************************************/
@@ -71,14 +93,21 @@ void OutputStateMachine::changeCylceMode(CycleMode newMode) {
     switch (newMode)
     {
     case DECREASE_EZ:
-
+        _currentStateNum = 0;
+        _currentStateOutputsArr = outputStateArray[_currentStateNum];
         break;
         
     case INCREASE_EZ:
         /* code */
         break;
-    
+
+    case IDLE:
+        /* code */
+        break;
+
     default:    // MANUAL
+        _currentStateNum = 0;
+        _currentStateOutputsArr = outputStateArray[_currentStateNum];
         break;
     }
 }

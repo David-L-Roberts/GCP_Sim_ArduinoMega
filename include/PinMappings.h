@@ -21,13 +21,13 @@
 
 // Map action codes to digital pin numbers
 const uint8_t pinMappings[NUM_OF_PINS] = {
-    R01,
-    R02,
-    R03,
-    R04,
-    R05,
-    R06,
-    R07,
-    R08,
     R09,
+    R08,
+    R07,
+    R06,
+    R05,
+    R04,
+    R03,
+    R02,
+    R01,
 };

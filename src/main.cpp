@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SerialPort.h>
 #include <PinMappings.h>
+#include <OutputStateMachine.h>
 
 // ==================================================
 //                 Function Prototypes
@@ -18,7 +19,7 @@ void toggleDigitalPin(const uint8_t &pin, const uint16_t &time);
 #define BAUD_RATE 9600
 #define WAIT_TIME 500       // in milliseconds
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
-
+OutputStateMachine outputSM = OutputStateMachine();
 
 // ==================================================
 //                      Main Loop
@@ -41,8 +42,20 @@ void loop() {
         if (serialPort.actionCode < 100) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
         }
-        else {  // start, stop, reset action codes 
-
+        else {  // start, stop, reset action codes
+            // temp
+            if (serialPort.actionCode = 100) {  // start
+                outputSM.changeCylceMode(DECREASE_EZ);
+                Serial.println("Mode changed: DECREASE_EZ");
+            }
+            else if (serialPort.actionCode = 101) { // reset
+                outputSM.changeCylceMode(MANUAL);
+                Serial.println("Mode changed: MANUAL");
+            }
+            else if (serialPort.actionCode = 102) { // stop
+                outputSM.changeCylceMode(IDLE);
+                Serial.println("Mode changed: MANUAL");
+            }
         }
 
         // clear the action-code
@@ -50,8 +63,7 @@ void loop() {
     }
 
     // increment state machine
-    // ...
-
+    outputSM.nextState();
 
     // temp
     delay(WAIT_TIME);

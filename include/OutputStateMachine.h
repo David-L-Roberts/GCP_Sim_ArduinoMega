@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <OutputStates.h>
+#include <PinMappings.h>
 
 
 /*  FEATURES
@@ -24,20 +25,26 @@
     allow reading of current state number.
     allow reading of current state output list.
 
+    expect following commands from PC:
+        Start
+        Stop
+        Reset
+
             
 */
 
 enum CycleMode {
     DECREASE_EZ,
     INCREASE_EZ,
-    MANUAL
+    MANUAL,
+    IDLE,
 };
 
-enum State {
-    IDLE,
-    RUNNING,
-    ERROR
-};
+// enum State {
+//     IDLE,
+//     RUNNING,
+//     ERROR
+// };
 
 
 
@@ -55,7 +62,9 @@ private:
 
     CycleMode _cycleMode = MANUAL;
 
+    void _applyStateOutputs();
     void _nextStateDecreaseEZ();
+    void _nextStateIncreaseEZ();
 
 public:
     bool endStateReached = false;
