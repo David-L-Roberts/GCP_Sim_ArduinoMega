@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <OutputStates.h>
-#include <PinMappings.h>
+#include "PinMappings.h"
 
 
 /*  FEATURES

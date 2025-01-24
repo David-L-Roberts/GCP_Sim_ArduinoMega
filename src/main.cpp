@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include <SerialPort.h>
-#include <PinMappings.h>
-#include <OutputStateMachine.h>
+#include "SerialPort.h"
+#include "PinMappings.h"
+#include "OutputStateMachine.h"
 
 // ==================================================
 //                 Function Prototypes
@@ -44,15 +44,15 @@ void loop() {
         }
         else {  // start, stop, reset action codes
             // temp
-            if (serialPort.actionCode = 100) {  // start
+            if (serialPort.actionCode == 100) {  // start
                 outputSM.changeCylceMode(DECREASE_EZ);
                 Serial.println("Mode changed: DECREASE_EZ");
             }
-            else if (serialPort.actionCode = 101) { // reset
+            else if (serialPort.actionCode == 101) { // reset
                 outputSM.changeCylceMode(MANUAL);
                 Serial.println("Mode changed: MANUAL");
             }
-            else if (serialPort.actionCode = 102) { // stop
+            else if (serialPort.actionCode == 102) { // stop
                 outputSM.changeCylceMode(IDLE);
                 Serial.println("Mode changed: MANUAL");
             }
