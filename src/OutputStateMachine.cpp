@@ -31,15 +31,16 @@ void OutputStateMachine::nextState() {
         break;
         
     case INCREASE_EZ:
-        /* code */
+        _nextStateIncreaseEZ();
+        _applyStateOutputs();
         break;
         
-    case IDLE:
-        /* code */
+    case MANUAL:
+        _applyStateOutputs();
         break;
     
-    default:    // MANUAL
-        _applyStateOutputs();
+    default:    // Other
+        // pass
         break;
     }
 }
@@ -51,7 +52,10 @@ void OutputStateMachine::nextState() {
 */
 /**************************************************************************/
 void OutputStateMachine::_nextStateDecreaseEZ() {
-    if (_currentStateNum == (MAX_STATE_NUM-1)) {
+    if (_currentStateNum == MAX_STATE_NUM) {
+        endStateReached = true;
+        return;
+    } else if (_currentStateNum == (MAX_STATE_NUM-1)) {
         endStateReached = true;
     }
 
@@ -59,6 +63,23 @@ void OutputStateMachine::_nextStateDecreaseEZ() {
     _currentStateOutputsArr = outputStateArray[_currentStateNum];
 }
 
+/**************************************************************************/
+/*!
+    @brief  Transition outputs to the next state, giving an increase in EZ.
+    @return void
+*/
+/**************************************************************************/
+void OutputStateMachine::_nextStateIncreaseEZ() {
+    if (_currentStateNum == 0) {
+        endStateReached = true;
+        return;
+    } else if (_currentStateNum == 1) {
+        endStateReached = true;
+    }
+
+    _currentStateNum = _currentStateNum - 1;
+    _currentStateOutputsArr = outputStateArray[_currentStateNum];
+}
 
 /**************************************************************************/
 /*!
@@ -93,21 +114,33 @@ void OutputStateMachine::changeCylceMode(CycleMode newMode) {
     switch (newMode)
     {
     case DECREASE_EZ:
-        _currentStateNum = 0;
-        _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        // Temp
         break;
         
     case INCREASE_EZ:
-        /* code */
+        // Temp
+        break;
+
+    case RESET_HIGH_EX:
+        _currentStateNum = 0;
+        _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        break;
+
+    case RESET_LOW_EX:
+        _currentStateNum = MAX_STATE_NUM;
+        _currentStateOutputsArr = outputStateArray[_currentStateNum];
         break;
 
     case IDLE:
         /* code */
         break;
-
-    default:    // MANUAL
+    
+    case MANUAL:
         _currentStateNum = 0;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        break;
+
+    default:
         break;
     }
 }

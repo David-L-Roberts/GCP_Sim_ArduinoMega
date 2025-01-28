@@ -1,6 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include <OutputStates.h>
+#include "OutputStates.h"
 #include "PinMappings.h"
 
 
@@ -33,11 +33,15 @@
             
 */
 
+#define MAX_STATE_NUM NUM_STATES-1
+
 enum CycleMode {
     DECREASE_EZ,
     INCREASE_EZ,
     MANUAL,
     IDLE,
+    RESET_LOW_EX,
+    RESET_HIGH_EX,
 };
 
 // enum State {
