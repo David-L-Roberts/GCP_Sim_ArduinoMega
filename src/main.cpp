@@ -21,6 +21,7 @@ void toggleDigitalPin(const uint8_t &pin, const uint16_t &time);
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
 
+
 // ==================================================
 //                      Main Loop
 // ==================================================
@@ -44,17 +45,37 @@ void loop() {
         }
         else {  // start, stop, reset action codes
             // temp
-            if (serialPort.actionCode == 100) {  // start
+            switch (serialPort.actionCode)
+            {
+            case DECREASE_EZ:
                 outputSM.changeCylceMode(DECREASE_EZ);
                 Serial.println("Mode changed: DECREASE_EZ");
-            }
-            else if (serialPort.actionCode == 101) { // reset
+                break;
+            case INCREASE_EZ:
+                outputSM.changeCylceMode(INCREASE_EZ);
+                Serial.println("Mode changed: INCREASE_EZ");
+                break;
+            case RESET_HIGH_EX:
+                outputSM.changeCylceMode(RESET_HIGH_EX);
+                Serial.println("Mode changed: RESET_HIGH_EX");
+                break;
+            case RESET_LOW_EX:
+                outputSM.changeCylceMode(RESET_LOW_EX);
+                Serial.println("Mode changed: RESET_LOW_EX");
+                break;
+            case MANUAL:
                 outputSM.changeCylceMode(MANUAL);
+                break;
                 Serial.println("Mode changed: MANUAL");
-            }
-            else if (serialPort.actionCode == 102) { // stop
+            case IDLE:
                 outputSM.changeCylceMode(IDLE);
-                Serial.println("Mode changed: MANUAL");
+                break;
+                Serial.println("Mode changed: IDLE");
+            
+            default:
+                Serial.println("[ERROR] invalid: serialPort.actionCode");
+                Serial.println(serialPort.actionCode);
+                break;
             }
         }
 

@@ -36,12 +36,12 @@
 #define MAX_STATE_NUM NUM_STATES-1
 
 enum CycleMode {
-    DECREASE_EZ,
+    DECREASE_EZ = 100,
     INCREASE_EZ,
-    MANUAL,
-    IDLE,
-    RESET_LOW_EX,
     RESET_HIGH_EX,
+    RESET_LOW_EX,
+    MANUAL = 110,
+    IDLE
 };
 
 // enum State {
