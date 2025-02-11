@@ -36,7 +36,7 @@ void OutputStateMachine::nextState() {
         break;
         
     case MANUAL:
-        _applyStateOutputs();
+        // _applyStateOutputs();
         break;
     
     default:    // Other: IDLE, RESET_HIGH_EX, RESET_LOW_EX

@@ -9,7 +9,7 @@
 
 void setupOutputPinModes(const uint8_t *pinMappings);
 void processRelayActionCode(SerialPort &serialPort, const uint8_t *pinMappings);
-void toggleDigitalPin(const uint8_t &pin, const uint16_t &time);
+void toggleDigitalPin(const uint8_t &pin);
 
 
 // ==================================================
@@ -17,9 +17,12 @@ void toggleDigitalPin(const uint8_t &pin, const uint16_t &time);
 // ==================================================
 
 #define BAUD_RATE 9600
-#define WAIT_TIME 600       // in milliseconds
+#define DEFAULT_WAIT_TIME 300       // in milliseconds
+
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
+
+int wait_time = DEFAULT_WAIT_TIME;
 
 
 // ==================================================
@@ -32,6 +35,7 @@ void setup() {
 
     // begin serial
     Serial.begin(BAUD_RATE);
+    Serial.println("=== System Start ===");
 }
 
 void loop() {
@@ -64,12 +68,12 @@ void loop() {
                 break;
             case MANUAL:
                 outputSM.changeCylceMode(MANUAL);
-                break;
                 Serial.println("Mode changed: MANUAL");
+                break;
             case IDLE:
                 outputSM.changeCylceMode(IDLE);
-                break;
                 Serial.println("Mode changed: IDLE");
+                break;
             
             default:
                 Serial.println("[ERROR] invalid: serialPort.actionCode");
@@ -86,7 +90,7 @@ void loop() {
     outputSM.nextState();
 
     // temp
-    delay(WAIT_TIME);
+    delay(wait_time);
 }
 
 
@@ -122,7 +126,7 @@ void setupOutputPinModes(const uint8_t *pinMappings) {
 /**************************************************************************/
 void processRelayActionCode(SerialPort &serialPort, const uint8_t *pinMappings) {
     // toggle the digital pin that corrsponds to the action-code recieved.
-    toggleDigitalPin(pinMappings[serialPort.actionCode], WAIT_TIME);
+    toggleDigitalPin(pinMappings[serialPort.actionCode]);
 }
 
 
@@ -134,9 +138,9 @@ void processRelayActionCode(SerialPort &serialPort, const uint8_t *pinMappings) 
     @return void
 */
 /**************************************************************************/
-void toggleDigitalPin(const uint8_t &pin, const uint16_t &time) {
+void toggleDigitalPin(const uint8_t &pin) {
     int state = digitalRead(pin);
-    digitalWrite(pin, ~state);
+    digitalWrite(pin, !state);
 }
 
 
