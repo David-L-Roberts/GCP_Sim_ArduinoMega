@@ -4,35 +4,6 @@
 #include "PinMappings.h"
 
 
-/*  FEATURES
-    ---
-
-    Allow call next state.
-    Two modes:
-        Train approach (decrease EZ)
-        Train leave (increase EZ) 
-    upon reaching end state, send signal of completion.
-    calling next state on end state should return an error.
-
-    manual and automatic mode.
-        automatic mode:
-            changing to a state will automatically set the digital outputs to the state.
-                increase and decrease EZ are sub-categories of this state
-        manual mode:
-            digital outputs will not be set by the state.
-            ? revert to state 0
-
-    allow reading of current state number.
-    allow reading of current state output list.
-
-    expect following commands from PC:
-        Start
-        Stop
-        Reset
-
-            
-*/
-
 #define MAX_STATE_NUM NUM_STATES-1
 
 enum CycleMode {
@@ -43,12 +14,6 @@ enum CycleMode {
     MANUAL = 110,
     IDLE
 };
-
-// enum State {
-//     IDLE,
-//     RUNNING,
-//     ERROR
-// };
 
 
 

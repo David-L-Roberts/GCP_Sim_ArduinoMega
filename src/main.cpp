@@ -17,7 +17,7 @@ void toggleDigitalPin(const uint8_t &pin, const uint16_t &time);
 // ==================================================
 
 #define BAUD_RATE 9600
-#define WAIT_TIME 500       // in milliseconds
+#define WAIT_TIME 600       // in milliseconds
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
 
@@ -43,8 +43,7 @@ void loop() {
         if (serialPort.actionCode < 100) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
         }
-        else {  // start, stop, reset action codes
-            // temp
+        else {
             switch (serialPort.actionCode)
             {
             case DECREASE_EZ:
@@ -139,3 +138,5 @@ void toggleDigitalPin(const uint8_t &pin, const uint16_t &time) {
     int state = digitalRead(pin);
     digitalWrite(pin, ~state);
 }
+
+

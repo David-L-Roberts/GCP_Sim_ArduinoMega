@@ -19,7 +19,7 @@ OutputStateMachine::OutputStateMachine() {
 /**************************************************************************/
 void OutputStateMachine::nextState() {
 
-    if (endStateReached) {      // TODO: REVIEW
+    if (endStateReached) {      // TODO: REVIEW - send signal on completion
         return; // do nothing
     }
 
@@ -39,7 +39,7 @@ void OutputStateMachine::nextState() {
         _applyStateOutputs();
         break;
     
-    default:    // Other
+    default:    // Other: IDLE, RESET_HIGH_EX, RESET_LOW_EX
         // pass
         break;
     }
@@ -124,11 +124,13 @@ void OutputStateMachine::changeCylceMode(CycleMode newMode) {
     case RESET_HIGH_EX:
         _currentStateNum = 0;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        _applyStateOutputs();
         break;
 
     case RESET_LOW_EX:
         _currentStateNum = MAX_STATE_NUM;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        _applyStateOutputs();
         break;
 
     case IDLE:
