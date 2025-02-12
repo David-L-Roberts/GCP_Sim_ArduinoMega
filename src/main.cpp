@@ -17,7 +17,7 @@ void toggleDigitalPin(const uint8_t &pin);
 // ==================================================
 
 #define BAUD_RATE 9600
-#define DEFAULT_WAIT_TIME 300       // in milliseconds
+#define DEFAULT_WAIT_TIME 600       // in milliseconds
 
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
@@ -44,7 +44,10 @@ void loop() {
 
     // if an action code was recieved, process it
     if (serialPort.actionCode != NO_CODE) {
-        if (serialPort.actionCode < 100) {  // relay action code
+        if (serialPort.actionCode == HMI_HELLO) {
+            Serial.println('<' + HMI_ACK + '>');
+        } 
+        else if (serialPort.actionCode < 100) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
         }
         else {
@@ -58,13 +61,13 @@ void loop() {
                 outputSM.changeCylceMode(INCREASE_EZ);
                 Serial.println("Mode changed: INCREASE_EZ");
                 break;
-            case RESET_HIGH_EX:
-                outputSM.changeCylceMode(RESET_HIGH_EX);
-                Serial.println("Mode changed: RESET_HIGH_EX");
+            case RESET_HIGH_EZ:
+                outputSM.changeCylceMode(RESET_HIGH_EZ);
+                Serial.println("Mode changed: RESET_HIGH_EZ");
                 break;
-            case RESET_LOW_EX:
-                outputSM.changeCylceMode(RESET_LOW_EX);
-                Serial.println("Mode changed: RESET_LOW_EX");
+            case RESET_LOW_EZ:
+                outputSM.changeCylceMode(RESET_LOW_EZ);
+                Serial.println("Mode changed: RESET_LOW_EZ");
                 break;
             case MANUAL:
                 outputSM.changeCylceMode(MANUAL);

@@ -70,7 +70,7 @@ void SerialPort::processData(const char * data) {
 
     #ifdef DEBUG
         // DEBUG: log action code received to Serial 
-        Serial.print("<ACTION CODE RECEIVED> -> ");
+        Serial.print("[ACTION CODE RECEIVED] :: ");
         Serial.println(actionCode);
     #endif
 }

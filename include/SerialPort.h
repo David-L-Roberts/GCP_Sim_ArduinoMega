@@ -1,8 +1,11 @@
 #pragma once
 #include <Arduino.h>
 
-#define MAX_INPUT 4    // max length of input chars read from serial
+#define MAX_INPUT 4     // max length of input chars read from serial (allow for null termination char)
+
 #define NO_CODE 255     // number used to signify when there is no current action code to execute
+#define HMI_HELLO 254   // action code for startup hello from HMI
+#define HMI_ACK 253     // action code for acknowledging HMI hello
 
 
 /**************************************************************************/

@@ -39,7 +39,7 @@ void OutputStateMachine::nextState() {
         // _applyStateOutputs();
         break;
     
-    default:    // Other: IDLE, RESET_HIGH_EX, RESET_LOW_EX
+    default:    // Other: IDLE, RESET_HIGH_EZ, RESET_LOW_EZ
         // pass
         break;
     }
@@ -121,13 +121,13 @@ void OutputStateMachine::changeCylceMode(CycleMode newMode) {
         // Temp
         break;
 
-    case RESET_HIGH_EX:
+    case RESET_HIGH_EZ:
         _currentStateNum = 0;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
         _applyStateOutputs();
         break;
 
-    case RESET_LOW_EX:
+    case RESET_LOW_EZ:
         _currentStateNum = MAX_STATE_NUM;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
         _applyStateOutputs();
