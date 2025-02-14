@@ -2,20 +2,9 @@
 #include <Arduino.h>
 #include "OutputStates.h"
 #include "PinMappings.h"
-
+#include "ComsAPI.h"
 
 #define MAX_STATE_NUM NUM_STATES-1
-
-enum CycleMode {
-    DECREASE_EZ     = 100,
-    INCREASE_EZ     = 101,
-    RESET_HIGH_EZ   = 102,
-    RESET_LOW_EZ    = 103,
-    MANUAL          = 110,
-    IDLE            = 111
-};
-
-
 
 /**************************************************************************/
 /*!
