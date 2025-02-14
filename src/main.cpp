@@ -3,6 +3,8 @@
 #include "PinMappings.h"
 #include "OutputStateMachine.h"
 
+#define DEBUG
+
 // ==================================================
 //                 Function Prototypes
 // ==================================================
@@ -45,7 +47,7 @@ void loop() {
     // if an action code was recieved, process it
     if (serialPort.actionCode != NO_CODE) {
         if (serialPort.actionCode == HMI_HELLO) {
-            Serial.println('<' + HMI_ACK + '>');
+            Serial.print('<' + HMI_ACK + '>');
         } 
         else if (serialPort.actionCode < 100) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
@@ -55,32 +57,51 @@ void loop() {
             {
             case DECREASE_EZ:
                 outputSM.changeCylceMode(DECREASE_EZ);
-                Serial.println("Mode changed: DECREASE_EZ");
+                #ifdef DEBUG 
+                    Serial.println("Mode changed: DECREASE_EZ");
+                #endif
                 break;
+
             case INCREASE_EZ:
                 outputSM.changeCylceMode(INCREASE_EZ);
-                Serial.println("Mode changed: INCREASE_EZ");
+                #ifdef DEBUG 
+                    Serial.println("Mode changed: INCREASE_EZ");
+                #endif
                 break;
+
             case RESET_HIGH_EZ:
                 outputSM.changeCylceMode(RESET_HIGH_EZ);
-                Serial.println("Mode changed: RESET_HIGH_EZ");
+                #ifdef DEBUG 
+                    Serial.println("Mode changed: RESET_HIGH_EZ");
+                #endif
                 break;
+
             case RESET_LOW_EZ:
                 outputSM.changeCylceMode(RESET_LOW_EZ);
-                Serial.println("Mode changed: RESET_LOW_EZ");
+                #ifdef DEBUG 
+                    Serial.println("Mode changed: RESET_LOW_EZ");
+                #endif
                 break;
+
             case MANUAL:
                 outputSM.changeCylceMode(MANUAL);
-                Serial.println("Mode changed: MANUAL");
+                #ifdef DEBUG 
+                    Serial.println("Mode changed: MANUAL");
+                #endif
                 break;
+                
             case IDLE:
                 outputSM.changeCylceMode(IDLE);
-                Serial.println("Mode changed: IDLE");
+                #ifdef DEBUG 
+                    Serial.println("Mode changed: IDLE");
+                #endif
                 break;
             
             default:
-                Serial.println("[ERROR] invalid: serialPort.actionCode");
-                Serial.println(serialPort.actionCode);
+                #ifdef DEBUG 
+                    Serial.println("[ERROR] invalid: serialPort.actionCode");
+                    Serial.println(serialPort.actionCode);
+                #endif
                 break;
             }
         }
