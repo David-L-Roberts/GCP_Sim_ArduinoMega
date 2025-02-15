@@ -1,5 +1,7 @@
 #include "OutputStateMachine.h"
 
+#define DEBUG
+
 /**************************************************************************/
 /*!
     @brief  Constructor
@@ -96,6 +98,8 @@ void OutputStateMachine::_applyStateOutputs() {
         pinNumber = pinMappings[i];
         digitalWrite(pinNumber, val);
     }
+
+    // TODO: add disable list here
 }
 
 
@@ -107,42 +111,64 @@ void OutputStateMachine::_applyStateOutputs() {
     @return void
 */
 /**************************************************************************/
-void OutputStateMachine::changeCylceMode(CycleMode newMode) {
-    _cycleMode = newMode;
+void OutputStateMachine::changeCylceMode(uint8_t newMode) {
     endStateReached = false;
 
     switch (newMode)
     {
     case DECREASE_EZ:
-        // Temp
+        _cycleMode = DECREASE_EZ;
+        #ifdef DEBUG 
+            Serial.println("Mode changed: DECREASE_EZ"); 
+        #endif
         break;
         
     case INCREASE_EZ:
-        // Temp
+        _cycleMode = INCREASE_EZ;
+        #ifdef DEBUG 
+            Serial.println("Mode changed: INCREASE_EZ");
+        #endif
         break;
 
     case RESET_HIGH_EZ:
+        _cycleMode = RESET_HIGH_EZ;
+        #ifdef DEBUG 
+            Serial.println("Mode changed: RESET_HIGH_EZ");
+        #endif
         _currentStateNum = 0;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
         _applyStateOutputs();
         break;
 
     case RESET_LOW_EZ:
+        _cycleMode = RESET_LOW_EZ;
+        #ifdef DEBUG 
+            Serial.println("Mode changed: RESET_LOW_EZ");
+        #endif
         _currentStateNum = MAX_STATE_NUM;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
         _applyStateOutputs();
         break;
 
     case IDLE:
-        /* code */
+        _cycleMode = IDLE;
+        #ifdef DEBUG 
+            Serial.println("Mode changed: IDLE");
+        #endif
         break;
     
     case MANUAL:
+        _cycleMode = MANUAL;
+        #ifdef DEBUG 
+            Serial.println("Mode changed: MANUAL");
+        #endif
         _currentStateNum = 0;
         _currentStateOutputsArr = outputStateArray[_currentStateNum];
         break;
 
     default:
+        Serial.print("[ERROR] invalid serialPort.actionCode: ");
+        Serial.println(newMode);
         break;
     }
 }

@@ -29,6 +29,6 @@ public:
 
     OutputStateMachine();
     void nextState();
-    void changeCylceMode(CycleMode newMode);
+    void changeCylceMode(uint8_t newMode);
 };
 
