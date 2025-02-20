@@ -25,7 +25,6 @@ OutputStateMachine outputSM = OutputStateMachine();
 int switch_time = DEFAULT_WAIT_TIME;
 bool switch_t_flag = false;
 
-
 // ==================================================
 //                      Main Loop
 // ==================================================
@@ -73,7 +72,14 @@ void loop() {
     outputSM.nextState();
 
     // temp
-    delay(switch_time);
+    int stateNum = outputSM.getCurrentStateNum();
+    int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switch_time * 0.5/100);
+
+    // Serial.print(stateNum);
+    // Serial.print(" :: ");
+    // Serial.println(timeAdjust);
+
+    delay(switch_time - timeAdjust);
 }
 
 

@@ -172,3 +172,8 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
         break;
     }
 }
+
+
+int OutputStateMachine::getCurrentStateNum() {
+    return _currentStateNum;
+}
