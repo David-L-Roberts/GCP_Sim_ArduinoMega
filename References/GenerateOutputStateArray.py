@@ -22,8 +22,11 @@ def write_binary_strings_to_file(num_bits: int, count: int, file_name: str, remo
             # Convert the string into the desired format
             formatted_str = "{" + ", ".join(binary_str) + "}"
 
-            # Print the formatted string
-            file.write(f'{formatted_str}, // state {state_num} -> GID {i} \n')
+
+            # skip Every second state
+            if (state_num % 2):
+                # Print the formatted string
+                file.write(f'{formatted_str}, // state {state_num} -> GID {i} \n')
 
             state_num += 1
     
