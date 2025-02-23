@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <math.h>
 #include "SerialPort.h"
 #include "PinMappings.h"
 #include "OutputStateMachine.h"
@@ -76,8 +77,10 @@ void loop() {
 
     // Temp
     int stateNum = outputSM.getCurrentStateNum();
-    int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switchTime * 0.5/100);
-
+    // int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switchTime * 0.5/100);
+    // int timeAdjust = floor(0.001068 * pow(stateNum, 2) * (float)switchTime * 0.5/100);
+    int timeAdjust = floor( (0.7*pow(3, 0.01475*(float)stateNum))/100 * (float)switchTime * 0.8);
+    
     // Serial.print(stateNum);
     // Serial.print(" :: ");
     // Serial.println(timeAdjust);
