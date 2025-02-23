@@ -2,6 +2,7 @@
 #include "SerialPort.h"
 #include "PinMappings.h"
 #include "OutputStateMachine.h"
+#include "Configs.h"
 
 // ==================================================
 //                 Function Prototypes
@@ -22,7 +23,8 @@ void toggleDigitalPin(const uint8_t &pin);
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
 
-int switch_time = DEFAULT_WAIT_TIME;
+uint16_t switchTime = DEFAULT_WAIT_TIME;
+uint16_t switchTimeAdjusted= switchTime;
 bool switch_t_flag = false;
 
 // ==================================================
@@ -46,10 +48,10 @@ void loop() {
     if (serialPort.actionCode != NO_CODE) {
 
         if (switch_t_flag == true) {
-            switch_time = serialPort.actionCode * SWITCH_T_MULT;
-            if (switch_time < SWITCH_T_MIN) switch_time = SWITCH_T_MIN;
+            switchTime = serialPort.actionCode * SWITCH_T_MULT;
+            if (switchTime < SWITCH_T_MIN) switchTime = SWITCH_T_MIN;
             switch_t_flag = false;
-            Serial.println("Updating Switching time to: " + String(switch_time) + " ms");
+            Serial.println("Updating Switching time to: " + String(switchTime) + " ms");
         }
         else if (serialPort.actionCode == CHANGE_SWITCH_T) {
             switch_t_flag = true;
@@ -57,7 +59,7 @@ void loop() {
         else if (serialPort.actionCode == HMI_HELLO) {
             Serial.print('<' + String(HMI_ACK) + '>');
         } 
-        else if (serialPort.actionCode < NUM_OUTPUTS) {  // relay action code
+        else if (serialPort.actionCode < NUM_RELAYS) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
         }
         else {
@@ -68,18 +70,25 @@ void loop() {
         serialPort.actionCode = NO_CODE;
     }
 
-    // increment state machine
-    outputSM.nextState();
+    // ==================================================
+    //                DYNAMIC SWITCHING
+    // ==================================================
 
-    // temp
+    // Temp
     int stateNum = outputSM.getCurrentStateNum();
-    int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switch_time * 0.5/100);
+    int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switchTime * 0.5/100);
 
     // Serial.print(stateNum);
     // Serial.print(" :: ");
     // Serial.println(timeAdjust);
 
-    delay(switch_time - timeAdjust);
+
+
+    // increment state machine
+    switchTimeAdjusted = switchTime - timeAdjust;
+    outputSM.switchTime = switchTimeAdjusted;
+    outputSM.nextState();
+    delay(switchTimeAdjusted);
 }
 
 

@@ -1,12 +1,5 @@
 #pragma once
 
-// received switching time is multiplied by this number (e.g. recv <250>; switching time becomes 250*4 = 1000 ms)
-#define SWITCH_T_MULT 4
-// minimum allowed swtching time (in ms)
-#define SWITCH_T_MIN 100
-
-// ===================================
-
 enum CycleMode {
     DECREASE_EZ     = 100,
     INCREASE_EZ     = 101,
