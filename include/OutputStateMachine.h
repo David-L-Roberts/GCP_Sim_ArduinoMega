@@ -16,7 +16,7 @@
 /**************************************************************************/
 class OutputStateMachine {
 private:
-    int _currentStateNum;       // number of the current state (indexes outputStateArray)
+    uint16_t _currentStateNum;       // number of the current state (indexes outputStateArray)
     bool _currentStateOutputsArr[NUM_RELAYS];    // array of outputs for the current state
 
     CycleMode _cycleMode = MANUAL;
@@ -33,8 +33,10 @@ public:
     OutputStateMachine();
     void nextState();
     void changeCylceMode(uint8_t newMode);
+    CycleMode getCycleMode();
 
-    int getCurrentStateNum();
-    int setCurrentStateNum(int newStateNum);
+    uint16_t getCurrentStateNum();
+    void setCurrentStateNum(uint16_t newStateNum);
+
 };
 

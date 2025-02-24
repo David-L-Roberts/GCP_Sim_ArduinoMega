@@ -199,12 +199,16 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
 }
 
 
-int OutputStateMachine::getCurrentStateNum() {
+uint16_t OutputStateMachine::getCurrentStateNum() {
     return _currentStateNum;
 }
 
-int OutputStateMachine::setCurrentStateNum(int newStateNum) {
+void OutputStateMachine::setCurrentStateNum(uint16_t newStateNum) {
     _currentStateNum = newStateNum;
     _updateCurrentStateOutputsArray();
     _applyStateOutputs();
+}
+
+CycleMode OutputStateMachine::getCycleMode() {
+    return _cycleMode;
 }
