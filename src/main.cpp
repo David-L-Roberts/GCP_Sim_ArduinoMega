@@ -1,7 +1,9 @@
 #include <Arduino.h>
+#include <math.h>
 #include "SerialPort.h"
 #include "PinMappings.h"
 #include "OutputStateMachine.h"
+#include "Configs.h"
 
 // ==================================================
 //                 Function Prototypes
@@ -22,9 +24,11 @@ void toggleDigitalPin(const uint8_t &pin);
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
 
-int switch_time = DEFAULT_WAIT_TIME;
+uint16_t switchTime = DEFAULT_WAIT_TIME;
+uint16_t switchTimeAdjusted= switchTime;
+uint16_t newStateNum;
 bool switch_t_flag = false;
-
+bool setStateFlag = false;
 
 // ==================================================
 //                      Main Loop
@@ -47,18 +51,35 @@ void loop() {
     if (serialPort.actionCode != NO_CODE) {
 
         if (switch_t_flag == true) {
-            switch_time = serialPort.actionCode * SWITCH_T_MULT;
-            if (switch_time < SWITCH_T_MIN) switch_time = SWITCH_T_MIN;
+            switchTime = serialPort.actionCode * SWITCH_T_MULT;
+            if (switchTime < SWITCH_T_MIN) switchTime = SWITCH_T_MIN;
             switch_t_flag = false;
-            Serial.println("Updating Switching time to: " + String(switch_time) + " ms");
+            Serial.println("Updating Switching time to: " + String(switchTime) + " ms");
+        }
+        else if (setStateFlag == true) {
+            newStateNum = serialPort.actionCode;
+            if (newStateNum >= NUM_STATES) {
+                Serial.println("[ERROR] Invalid state number received (" + String(newStateNum) 
+                                + "). Changing to: " + String(NUM_STATES-1));
+                newStateNum = NUM_STATES - 1;
+            }
+            outputSM.setCurrentStateNum(newStateNum);
+            Serial.println("System state set to: #" + String(outputSM.getCurrentStateNum()));
+            setStateFlag = false;
         }
         else if (serialPort.actionCode == CHANGE_SWITCH_T) {
             switch_t_flag = true;
         }
+        else if (serialPort.actionCode == SET_STATE) {
+            setStateFlag = true;
+            if (outputSM.getCycleMode() != MANUAL) {
+                outputSM.changeCylceMode(MANUAL);
+            }
+        }
         else if (serialPort.actionCode == HMI_HELLO) {
             Serial.print('<' + String(HMI_ACK) + '>');
         } 
-        else if (serialPort.actionCode < NUM_OUTPUTS) {  // relay action code
+        else if (serialPort.actionCode < NUM_RELAYS) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
         }
         else {
@@ -69,11 +90,27 @@ void loop() {
         serialPort.actionCode = NO_CODE;
     }
 
-    // increment state machine
-    outputSM.nextState();
+    // ==================================================
+    //                DYNAMIC SWITCHING
+    // ==================================================
 
-    // temp
-    delay(switch_time);
+    // Temp
+    int stateNum = outputSM.getCurrentStateNum();
+    // int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switchTime * 0.5/100);
+    // int timeAdjust = floor(0.001068 * pow(stateNum, 2) * (float)switchTime * 0.5/100);
+    int timeAdjust = floor( (0.7*pow(3, 0.01475*(float)stateNum))/100 * (float)switchTime * 0.8);
+    
+    // Serial.print(stateNum);
+    // Serial.print(" :: ");
+    // Serial.println(timeAdjust);
+
+
+
+    // increment state machine
+    switchTimeAdjusted = switchTime - timeAdjust;
+    outputSM.switchTime = switchTimeAdjusted;
+    outputSM.nextState();
+    delay(switchTimeAdjusted);
 }
 
 

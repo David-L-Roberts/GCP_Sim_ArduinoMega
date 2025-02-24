@@ -1,18 +1,17 @@
 #pragma once
 #include <Arduino.h>
+#include "Configs.h"
 
 // Array values generated with script: References\GenerateOutputStateArray.py
 
 #define NUM_STATES 306
-#define NUM_OUTPUTS 9
-
 /*
     Holds list of output states.
     Each row represents a set of outputs.
     The values in each row represent the value of each output for that state (on=1, off=0).
     First output is in the last position; last output is in the first position.
 */
-const bool outputStateArray[NUM_STATES][NUM_OUTPUTS] = {
+const bool outputStateArray[NUM_STATES][NUM_RELAYS] = {
 //   9  8  7  6  5  4  3  2  1   Ouput Num
     {0, 0, 0, 0, 0, 0, 0, 0, 0}, // state 0 -> GID 0 
     {0, 0, 0, 0, 0, 0, 0, 0, 1}, // state 1 -> GID 1 
