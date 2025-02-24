@@ -3,12 +3,9 @@
 
 
 ## TO DO
-Timer
-- Accept switching time from serial monitor
-- change switching time to be based off timer interrupts instead of sleep wait time
-- As switching period decrease, being jumping over every 2nd state (or more etc... depending on min switching time)
 
 Action codes
+- in manual mode, allow setting to specific state number
 - allow manual setting of relays when in `manual` mode
 - in decrease or increase EZ mode, send completion signal over serial when switching has finished
   - calling next state on end state should return an error.
@@ -17,3 +14,8 @@ Serial Coms
 - allow reading of current state number
   - allow reading of current state output list (binary state >> 110011001)
 
+Check data type of action codes from uint8_t to uint16_t.
+
+Process set_state action code, then listen for state number
+
+force system change to state number

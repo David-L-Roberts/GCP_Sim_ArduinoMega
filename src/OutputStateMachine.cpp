@@ -188,7 +188,6 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
         #ifdef DEBUG 
             Serial.println("Mode changed: MANUAL");
         #endif
-        _currentStateNum = 0;
         _updateCurrentStateOutputsArray();
         break;
 
@@ -202,4 +201,10 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
 
 int OutputStateMachine::getCurrentStateNum() {
     return _currentStateNum;
+}
+
+int OutputStateMachine::setCurrentStateNum(int newStateNum) {
+    _currentStateNum = newStateNum;
+    _updateCurrentStateOutputsArray();
+    _applyStateOutputs();
 }

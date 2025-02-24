@@ -14,7 +14,7 @@
     that relay will stop switching in/out.
     Relays will remain in the ON state after triggering for the first time.
 */
-const uint16_t relayLockoutTimes[NUM_RELAYS] = {
+const uint8_t relayLockoutTimes[NUM_RELAYS] = {
     1,      // Relay 9
     1,      // Relay 8
     3,      // Relay 7

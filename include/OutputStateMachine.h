@@ -33,6 +33,8 @@ public:
     OutputStateMachine();
     void nextState();
     void changeCylceMode(uint8_t newMode);
+
     int getCurrentStateNum();
+    int setCurrentStateNum(int newStateNum);
 };
 

@@ -26,7 +26,9 @@ OutputStateMachine outputSM = OutputStateMachine();
 
 uint16_t switchTime = DEFAULT_WAIT_TIME;
 uint16_t switchTimeAdjusted= switchTime;
+int newStateNum;
 bool switch_t_flag = false;
+bool setStateFlag = false;
 
 // ==================================================
 //                      Main Loop
@@ -54,8 +56,18 @@ void loop() {
             switch_t_flag = false;
             Serial.println("Updating Switching time to: " + String(switchTime) + " ms");
         }
+        else if (setStateFlag == true) {
+            newStateNum = serialPort.actionCode;
+            // -------------------------------------> add check for valid state number
+            outputSM.changeCylceMode(MANUAL);
+            outputSM.setCurrentStateNum(newStateNum);
+            Serial.println("System state set to: " + String(outputSM.getCurrentStateNum()));
+        }
         else if (serialPort.actionCode == CHANGE_SWITCH_T) {
             switch_t_flag = true;
+        }
+        else if (serialPort.actionCode == SET_STATE) {
+            setStateFlag = true;
         }
         else if (serialPort.actionCode == HMI_HELLO) {
             Serial.print('<' + String(HMI_ACK) + '>');
