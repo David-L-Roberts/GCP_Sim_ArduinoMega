@@ -105,7 +105,7 @@ void loop() {
     // Serial.print(stateNum);
     // Serial.print(" :: ");
     // Serial.println(timeAdjust);
-    if ((stateNum % 10) == 0) {
+    if (((stateNum % 10) == 0) && (stateNum != 0) && (stateNum != MAX_STATE_NUM)) {
         Serial.print("[DEBUG] :: state reached = ");
         Serial.println(stateNum);
     }
