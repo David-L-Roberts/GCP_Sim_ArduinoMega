@@ -19,7 +19,7 @@ void toggleDigitalPin(const uint8_t &pin);
 // ==================================================
 
 #define BAUD_RATE 9600
-#define DEFAULT_WAIT_TIME 600       // in milliseconds
+#define DEFAULT_WAIT_TIME 200       // in milliseconds
 
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
@@ -98,16 +98,21 @@ void loop() {
     int stateNum = outputSM.getCurrentStateNum();
     // int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switchTime * 0.5/100);
     // int timeAdjust = floor(0.001068 * pow(stateNum, 2) * (float)switchTime * 0.5/100);
-    int timeAdjust = floor( (0.7*pow(3, 0.01475*(float)stateNum))/100 * (float)switchTime * 0.8);
+    // int timeAdjust = floor( (0.7*pow(3, 0.01475*(float)stateNum))/100 * (float)switchTime * 0.8);
+    int timeAdjust = floor((7*pow(10, -6)*pow(stateNum, 2) - 0.0055*stateNum + 1.019) * (switchTime*2));
+
     
     // Serial.print(stateNum);
     // Serial.print(" :: ");
     // Serial.println(timeAdjust);
-
+    if ((stateNum % 10) == 0) {
+        Serial.print("[DEBUG] :: state reached = ");
+        Serial.println(stateNum);
+    }
 
 
     // increment state machine
-    switchTimeAdjusted = switchTime - timeAdjust;
+    switchTimeAdjusted = switchTime + timeAdjust;
     outputSM.switchTime = switchTimeAdjusted;
     outputSM.nextState();
     delay(switchTimeAdjusted);
