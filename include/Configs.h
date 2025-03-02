@@ -5,6 +5,8 @@
 #define SWITCH_T_MULT 4
 // minimum allowed swtching time (in ms)
 #define SWITCH_T_MIN 50
+// dynamic switching function's base time multiplyer
+#define SWITCH_BASE_MULT 4
 // number of relays that control inductors
 #define NUM_RELAYS 9
 

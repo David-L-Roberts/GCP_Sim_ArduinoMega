@@ -90,24 +90,25 @@ void loop() {
         serialPort.actionCode = NO_CODE;
     }
 
+    int stateNum = outputSM.getCurrentStateNum();
     // ==================================================
     //                DYNAMIC SWITCHING
     // ==================================================
+    // adjust switching time to linearize EZ curve
+    int timeAdjust = floor((7*pow(10, -6)*pow(stateNum, 2) - 0.0055*stateNum + 1.02) * (switchTime*SWITCH_BASE_MULT));
 
-    // Temp
-    int stateNum = outputSM.getCurrentStateNum();
-    // int timeAdjust = floor(0.001068 * ((float)stateNum * (float)stateNum) * (float)switchTime * 0.5/100);
-    // int timeAdjust = floor(0.001068 * pow(stateNum, 2) * (float)switchTime * 0.5/100);
-    // int timeAdjust = floor( (0.7*pow(3, 0.01475*(float)stateNum))/100 * (float)switchTime * 0.8);
-    int timeAdjust = floor((7*pow(10, -6)*pow(stateNum, 2) - 0.0055*stateNum + 1.019) * (switchTime*2));
-
-    
+    // DEBUG
     // Serial.print(stateNum);
     // Serial.print(" :: ");
     // Serial.println(timeAdjust);
-    if (((stateNum % 10) == 0) && (stateNum != 0) && (stateNum != MAX_STATE_NUM)) {
-        Serial.print("[DEBUG] :: state reached = ");
-        Serial.println(stateNum);
+
+    // TODO: can probably move this logic to a better location (into outputSM)
+    // Log arrival to every 10th state number
+    if ((outputSM.getCycleMode() == DECREASE_EZ) || (outputSM.getCycleMode() == INCREASE_EZ)) {
+        if (((stateNum % 10) == 0) && (stateNum != 0) && (stateNum != MAX_STATE_NUM)) {
+            Serial.print("[DEBUG] :: state reached = ");
+            Serial.println(stateNum);
+        }
     }
 
 
