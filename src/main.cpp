@@ -54,7 +54,7 @@ void loop() {
             switchTime = serialPort.actionCode * SWITCH_T_MULT;
             if (switchTime < SWITCH_T_MIN) switchTime = SWITCH_T_MIN;
             switch_t_flag = false;
-            Serial.println("Updating Switching time to: " + String(switchTime) + " ms");
+            Serial.println("|DEBUG| Updating base switching period to: " + String(switchTime) + " ms");
         }
         else if (setStateFlag == true) {
             newStateNum = serialPort.actionCode;
