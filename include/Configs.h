@@ -4,7 +4,7 @@
 // received switching time is multiplied by this number (e.g. recv <250>; switching time becomes 250*2 = 500 ms)
 #define SWITCH_T_MULT 2
 // minimum allowed swtching time (in ms)
-#define SWITCH_T_MIN 50
+#define SWITCH_T_MIN 25
 // dynamic switching function's base time multiplyer
 #define SWITCH_BASE_MULT 4
 // number of relays that control inductors
