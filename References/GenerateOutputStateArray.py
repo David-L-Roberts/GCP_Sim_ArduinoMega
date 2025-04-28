@@ -1,3 +1,5 @@
+# GID referencing = ID given to states, ignoring any states that are being manually removed (does account for L6 being linked to L5 and L4)
+
 # Function to format and print a binary number
 def write_binary_strings_to_file(num_bits: int, count: int, file_name: str, remove_list: list):
     with open(file_name, "w") as file:
@@ -26,7 +28,7 @@ def write_binary_strings_to_file(num_bits: int, count: int, file_name: str, remo
             file.write(f'{formatted_str}, // state {state_num} -> GID {i} \n')
 
             state_num += 1
-    
+    print(i)
     return state_num
 
 
@@ -38,6 +40,7 @@ file_name = "OutputStateArray.txt"
 remove_list = [
     64,  65,
     128, 129,
+    154, 155, 156, 157, 158, 159,
     192, 193,
     256, 257,
     320, 321,

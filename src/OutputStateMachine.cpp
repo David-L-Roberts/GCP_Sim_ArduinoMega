@@ -9,7 +9,19 @@
 /**************************************************************************/
 OutputStateMachine::OutputStateMachine() {
     _currentStateNum = 0;
-    _currentStateOutputsArr = outputStateArray[_currentStateNum];
+    _updateCurrentStateOutputsArray();
+}
+
+/**************************************************************************/
+/*!
+    @brief  Copy the current state output list into local array from lookup
+            table using the current state number.
+*/
+/**************************************************************************/
+void OutputStateMachine::_updateCurrentStateOutputsArray() {
+    for (int i = 0; i < NUM_RELAYS; i++) {
+        _currentStateOutputsArr[i] = outputStateArray[_currentStateNum][i];
+    }
 }
 
 
@@ -22,7 +34,7 @@ OutputStateMachine::OutputStateMachine() {
 void OutputStateMachine::nextState() {
 
     if (endStateReached) {      // TODO: REVIEW - send signal on completion
-        return; // do nothing
+        return;
     }
 
     switch (_cycleMode)
@@ -62,7 +74,15 @@ void OutputStateMachine::_nextStateDecreaseEZ() {
     }
 
     _currentStateNum = _currentStateNum + 1;
-    _currentStateOutputsArr = outputStateArray[_currentStateNum];
+    _updateCurrentStateOutputsArray();
+
+    // TODO: only lockout after switched on for first time
+    // apply switching time lockouts
+    for (int i = 0; i < NUM_RELAYS; i++){
+        if (switchTime < relayLockoutTimes[i]) {
+            _currentStateOutputsArr[i] = true;
+        }
+    }
 }
 
 /**************************************************************************/
@@ -80,7 +100,15 @@ void OutputStateMachine::_nextStateIncreaseEZ() {
     }
 
     _currentStateNum = _currentStateNum - 1;
-    _currentStateOutputsArr = outputStateArray[_currentStateNum];
+    _updateCurrentStateOutputsArray();
+
+    // TODO: only lockout after switched off for first time
+    // apply switching time lockouts
+    for (int i = 0; i < NUM_RELAYS; i++){
+        if (switchTime < relayLockoutTimes[i]) {
+            _currentStateOutputsArr[i] = false;
+        }
+    }
 }
 
 /**************************************************************************/
@@ -93,13 +121,11 @@ void OutputStateMachine::_applyStateOutputs() {
     int pinNumber;
     int val;
 
-    for (int i; i < NUM_OUTPUTS; i++) {
+    for (int i; i < NUM_RELAYS; i++) {
         val = _currentStateOutputsArr[i];
         pinNumber = pinMappings[i];
         digitalWrite(pinNumber, val);
     }
-
-    // TODO: add disable list here
 }
 
 
@@ -136,7 +162,7 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
             Serial.println("Mode changed: RESET_HIGH_EZ");
         #endif
         _currentStateNum = 0;
-        _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        _updateCurrentStateOutputsArray();
         _applyStateOutputs();
         break;
 
@@ -146,7 +172,7 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
             Serial.println("Mode changed: RESET_LOW_EZ");
         #endif
         _currentStateNum = MAX_STATE_NUM;
-        _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        _updateCurrentStateOutputsArray();
         _applyStateOutputs();
         break;
 
@@ -162,8 +188,7 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
         #ifdef DEBUG 
             Serial.println("Mode changed: MANUAL");
         #endif
-        _currentStateNum = 0;
-        _currentStateOutputsArr = outputStateArray[_currentStateNum];
+        _updateCurrentStateOutputsArray();
         break;
 
     default:
@@ -171,4 +196,19 @@ void OutputStateMachine::changeCylceMode(uint8_t newMode) {
         Serial.println(newMode);
         break;
     }
+}
+
+
+uint16_t OutputStateMachine::getCurrentStateNum() {
+    return _currentStateNum;
+}
+
+void OutputStateMachine::setCurrentStateNum(uint16_t newStateNum) {
+    _currentStateNum = newStateNum;
+    _updateCurrentStateOutputsArray();
+    _applyStateOutputs();
+}
+
+CycleMode OutputStateMachine::getCycleMode() {
+    return _cycleMode;
 }

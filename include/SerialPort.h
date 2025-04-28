@@ -22,7 +22,7 @@ private:
     void processData(const char * data);
 
 public:
-    uint8_t actionCode = NO_CODE;   // 255 = invalid action code
+    uint16_t actionCode = NO_CODE;   // 255 = invalid action code
 
     void readFromSerial();
 };

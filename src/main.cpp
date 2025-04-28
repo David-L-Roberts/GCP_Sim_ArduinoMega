@@ -1,7 +1,9 @@
 #include <Arduino.h>
+#include <math.h>
 #include "SerialPort.h"
 #include "PinMappings.h"
 #include "OutputStateMachine.h"
+#include "Configs.h"
 
 // ==================================================
 //                 Function Prototypes
@@ -17,14 +19,16 @@ void toggleDigitalPin(const uint8_t &pin);
 // ==================================================
 
 #define BAUD_RATE 9600
-#define DEFAULT_WAIT_TIME 600       // in milliseconds
+#define DEFAULT_WAIT_TIME 200       // in milliseconds
 
 SerialPort serialPort = SerialPort();   // Custom Serial Port object
 OutputStateMachine outputSM = OutputStateMachine();
 
-int switch_time = DEFAULT_WAIT_TIME;
+uint16_t switchTime = DEFAULT_WAIT_TIME;
+uint16_t switchTimeAdjusted= switchTime;
+uint16_t newStateNum;
 bool switch_t_flag = false;
-
+bool setStateFlag = false;
 
 // ==================================================
 //                      Main Loop
@@ -47,18 +51,35 @@ void loop() {
     if (serialPort.actionCode != NO_CODE) {
 
         if (switch_t_flag == true) {
-            switch_time = serialPort.actionCode * SWITCH_T_MULT;
-            if (switch_time < SWITCH_T_MIN) switch_time = SWITCH_T_MIN;
+            switchTime = serialPort.actionCode * SWITCH_T_MULT;
+            if (switchTime < SWITCH_T_MIN) switchTime = SWITCH_T_MIN;
             switch_t_flag = false;
-            Serial.println("Updating Switching time to: " + String(switch_time) + " ms");
+            Serial.println("|DEBUG| Updating base switching period to: " + String(switchTime) + " ms");
+        }
+        else if (setStateFlag == true) {
+            newStateNum = serialPort.actionCode;
+            if (newStateNum >= NUM_STATES) {
+                Serial.println("[ERROR] Invalid state number received (" + String(newStateNum) 
+                                + "). Changing to: " + String(NUM_STATES-1));
+                newStateNum = NUM_STATES - 1;
+            }
+            outputSM.setCurrentStateNum(newStateNum);
+            Serial.println("System state set to: #" + String(outputSM.getCurrentStateNum()));
+            setStateFlag = false;
         }
         else if (serialPort.actionCode == CHANGE_SWITCH_T) {
             switch_t_flag = true;
         }
+        else if (serialPort.actionCode == SET_STATE) {
+            setStateFlag = true;
+            if (outputSM.getCycleMode() != MANUAL) {
+                outputSM.changeCylceMode(MANUAL);
+            }
+        }
         else if (serialPort.actionCode == HMI_HELLO) {
             Serial.print('<' + String(HMI_ACK) + '>');
         } 
-        else if (serialPort.actionCode < NUM_OUTPUTS) {  // relay action code
+        else if (serialPort.actionCode < NUM_RELAYS) {  // relay action code
             processRelayActionCode(serialPort, pinMappings);
         }
         else {
@@ -69,11 +90,33 @@ void loop() {
         serialPort.actionCode = NO_CODE;
     }
 
-    // increment state machine
-    outputSM.nextState();
+    int stateNum = outputSM.getCurrentStateNum();
+    // ==================================================
+    //                DYNAMIC SWITCHING
+    // ==================================================
+    // adjust switching time to linearize EZ curve
+    int timeAdjust = floor((7*pow(10, -6)*pow(stateNum, 2) - 0.0055*stateNum + 1.02) * (switchTime*SWITCH_BASE_MULT));
 
-    // temp
-    delay(switch_time);
+    // DEBUG
+    // Serial.print(stateNum);
+    // Serial.print(" :: ");
+    // Serial.println(timeAdjust);
+
+    // TODO: can probably move this logic to a better location (into outputSM)
+    // Log arrival to every 10th state number
+    if ((outputSM.getCycleMode() == DECREASE_EZ) || (outputSM.getCycleMode() == INCREASE_EZ)) {
+        if (((stateNum % 10) == 0) && (stateNum != 0) && (stateNum != MAX_STATE_NUM)) {
+            Serial.print("[DEBUG] :: state reached = ");
+            Serial.println(stateNum);
+        }
+    }
+
+
+    // increment state machine
+    switchTimeAdjusted = switchTime + timeAdjust;
+    outputSM.switchTime = switchTimeAdjusted;
+    outputSM.nextState();
+    delay(switchTimeAdjusted);
 }
 
 
